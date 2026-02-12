@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Pagamento Confirmado</title>
+
+  <!-- TikTok Pixel -->
+  <script>
+  !function (w, d, t) {
+    w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];
+    ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie"];
+    ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);
+    ttq.load=function(e){var i="https://analytics.tiktok.com/i18n/pixel/events.js";
+    var o=document.createElement("script");o.type="text/javascript";o.async=!0;o.src=i+"?sdkid="+e+"&lib=ttq";
+    var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(o,a)};
+    ttq.load('D637B7JC77UBD797BUMG');
+    ttq.page();
+  }(window, document, 'ttq');
+  </script>
+
+  <script>
+    ttq.track('Purchase', {
+      value: 24.00,
+      currency: 'BRL'
+    });
+  </script>
+
+</head>
+
+<body style="background:#000;color:#fff;text-align:center;font-family:sans-serif;padding-top:100px;">
+  <h1>🔥 Payment Confirmed</h1>
+  <p>Your access has been successfully activated.</p>
+  <a href="https://t.me/+pl-8acMjGRI3YzNh" style="color:#0f0;font-size:20px;">Access Now</a>
+</body>
+</html>
