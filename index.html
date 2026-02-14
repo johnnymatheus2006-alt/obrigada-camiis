@@ -5,45 +5,53 @@
   <title>Pagamento Confirmado</title>
 
   <!-- TikTok Pixel -->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Pagamento Confirmado</title>
+
+  <!-- TikTok Pixel -->
 <script>
-!function(w,d,t){
-  w.TiktokAnalyticsObject=t;
-  var ttq=w[t]=w[t]||[];
-  ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"];
-  ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};
-  for(var i=0;i<ttq.methods.length;i++) ttq.setAndDefer(ttq,ttq.methods[i]);
-  ttq.load=function(e,n){
-    var r="https://analytics.tiktok.com/i18n/pixel/events.js";
-    ttq._i=ttq._i||{}, ttq._i[e]=[], ttq._i[e]._u=r;
-    ttq._t=ttq._t||{}, ttq._t[e]=+new Date;
-    ttq._o=ttq._o{};
-    n=document.createElement("script");
-    n.type="text/javascript"; n.async=!0; n.src=r+"?sdkid="+e+"&lib="+t;
-    var s=document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(n,s);
-  };
-  
+!function (w, d, t) {
+  w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(
+var e=ttq._i[t]{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t{},ttq._o[e]=n||{};n=document.createElement("script")
+;n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};
+
+
   ttq.load('D689IO3C77U1GPVV3C90');
-
-  // Aqui garantimos que só dispara eventos depois que o SDK carregar
-  ttq.ready(function(){
-      // Pageview
-      ttq.page();
-
-      // ClickCTA exemplo, dispara manualmente quando quiser
-      const btn = document.getElementById("vipBtn");
-      if(btn){
-          btn.addEventListener("click", function(){
-              ttq.track("ClickCTA", { content_id: "vip_access" });
-          });
-      }
-
-      // Purchase exemplo, dispara na página de obrigado
-      if(window.location.href.includes("obrigado") || window.location.pathname.includes("area-restrita")){
-          ttq.track("Purchase", { value: 29.90, currency: "BRL" });
-      }
-  });
-}(window,document,'ttq');
+  setTimeout(()=>ttq.track("ViewContent",{content_id:"vip_access"}),300);
+}(window, document, 'ttq');
 </script>
+
+  <script>
+    ttq.track('Purchase', {
+      value: 29.90,
+      currency: 'BRL'
+    });
+  </script>
+
+</head>
+
+<body style="background:#000;color:#fff;text-align:center;font-family:sans-serif;padding-top:100px;">
+  <h1>🔥 Pagamento Confirmado </h1>
+  <p>Seu acesso foi ativado com sucesso..</p>
+  <a href="https://t.me/+pl-8acMjGRI3YzNh" target="_blank">
+  <button style="
+    background-color:#ff0033;
+    color:white;
+    padding:18px 40px;
+    font-size:18px;
+    font-weight:bold;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+  ">
+    🔥 ENTRAR NO VIP AGORA
+  </button>
+</a>
+</body>
+</html>
 
 </head>
 
