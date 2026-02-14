@@ -21,13 +21,27 @@
     n.type="text/javascript"; n.async=!0; n.src=r+"?sdkid="+e+"&lib="+t;
     var s=document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(n,s);
   };
+  
   ttq.load('D689IO3C77U1GPVV3C90');
-  // Espera 500ms pra garantir carregamento do pixel
-  setTimeout(function(){
-    ttq.page(); // ViewContent
-    ttq.track("ClickCTA",{content_id:"vip_access"});
-    ttq.track("Purchase",{value:29.90,currency:"BRL"});
-  },500);
+
+  // Aqui garantimos que só dispara eventos depois que o SDK carregar
+  ttq.ready(function(){
+      // Pageview
+      ttq.page();
+
+      // ClickCTA exemplo, dispara manualmente quando quiser
+      const btn = document.getElementById("vipBtn");
+      if(btn){
+          btn.addEventListener("click", function(){
+              ttq.track("ClickCTA", { content_id: "vip_access" });
+          });
+      }
+
+      // Purchase exemplo, dispara na página de obrigado
+      if(window.location.href.includes("obrigado") || window.location.pathname.includes("area-restrita")){
+          ttq.track("Purchase", { value: 29.90, currency: "BRL" });
+      }
+  });
 }(window,document,'ttq');
 </script>
 
