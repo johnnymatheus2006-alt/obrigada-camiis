@@ -1,31 +1,17 @@
-export const config = {
-  runtime: 'edge',
-};
+import crypto from "crypto";
 
-async function sha256(message) {
-  const msgBuffer = new TextEncoder().encode(message);
-  const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-}
-
-export default async function handler(req) {
-
-  if (req.method !== 'POST') {
-    return new Response(JSON.stringify({ error: "Method Not Allowed" }), {
-      status: 405
-    });
-  }
+export default async function handler(req, res) {
 
   try {
 
-    const body = await req.json();
-    const { transactionId } = body;
+    if (req.method !== "POST") {
+      return res.status(405).json({ error: "Method Not Allowed" });
+    }
+
+    const { transactionId } = req.body;
 
     if (!transactionId) {
-      return new Response(JSON.stringify({ error: "Missing transactionId" }), {
-        status: 400
-      });
+      return res.status(400).json({ error: "Missing transactionId" });
     }
 
     const SYNC_PUBLIC_KEY = process.env.SYNC_PUBLIC_KEY;
@@ -33,32 +19,38 @@ export default async function handler(req) {
     const META_ACCESS_TOKEN = process.env.META_ACCESS_TOKEN;
 
     if (!SYNC_PUBLIC_KEY  !META_ACCESS_TOKEN) {
-      return new Response(JSON.stringify({ error: "Missing ENV" }), {
-        status: 500
-      });
+      return res.status(500).json({ error: "Missing ENV variables" });
     }
 
-    const encodedAuth = btoa(${SYNC_PUBLIC_KEY}:${SYNC_PRIVATE_KEY});
+    // 🔐 Basic Auth
+    const encodedAuth = Buffer
+      .from(${SYNC_PUBLIC_KEY}:${SYNC_PRIVATE_KEY})
+      .toString("base64");
 
+    // 🔎 Consulta Sync
     const syncResponse = await fetch(
       https://api.syncpay.pro/s1/getTransaction/api/getTransactionStatus.php?id_transaction=${transactionId},
       {
+        method: "GET",
         headers: {
-          "Authorization": Basic ${encodedAuth}
+          Authorization: Basic ${encodedAuth}
         }
       }
     );
 
     const syncData = await syncResponse.json();
 
-    if (syncData.situacao !== "APROVADO") {
-      return new Response(JSON.stringify({ status: "NOT_APPROVED" }), {
-        status: 200
-      });
+    if (!syncData || syncData.situacao !== "APROVADO") {
+      return res.status(200).json({ status: "NOT_APPROVED" });
     }
 
-    const hashedEmail = await sha256(syncData.email.trim().toLowerCase());
+    // 🔐 Hash email
+    const hashedEmail = crypto
+      .createHash("sha256")
+      .update(syncData.email.trim().toLowerCase())
+      .digest("hex");
 
+    // 📡 Envia pra Meta
     const metaPayload = {
       data: [{
         event_name: "Purchase",
@@ -78,23 +70,25 @@ export default async function handler(req) {
       https://graph.facebook.com/v18.0/1303581471201526/events?access_token=${META_ACCESS_TOKEN},
       {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json"
+        },
         body: JSON.stringify(metaPayload)
       }
     );
 
     const metaResult = await metaResponse.json();
 
-    return new Response(JSON.stringify({
+    return res.status(200).json({
       status: "PURCHASE_SENT",
       meta: metaResult
-    }), { status: 200 });
+    });
 
-  } catch (err) {
+  } catch (error) {
 
-    return new Response(JSON.stringify({
-      error: err.message
-    }), { status: 500 });
+    return res.status(500).json({
+      error: error.message
+    });
 
   }
 }
