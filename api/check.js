@@ -61,7 +61,7 @@ export default async function handler(req, res) {
           em: hashedEmail
         },
         custom_data: {
-          currency: "GBP",
+          currency: "BRL",
           value: parseFloat(syncData.valor_bruto)
         }
       }]
