@@ -1,14 +1,12 @@
-import crypto from 'crypto';
-
 export default async function handler(req, res) {
-
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method Not Allowed' });
-  }
 
   try {
 
-    const { transactionId } = req.body;
+    if (req.method !== 'POST') {
+      return res.status(405).json({ error: 'Method Not Allowed' });
+    }
+
+    const { transactionId } = req.body || {};
 
     if (!transactionId) {
       return res.status(400).json({ error: 'Missing transactionId' });
@@ -17,13 +15,12 @@ export default async function handler(req, res) {
     const SYNC_PUBLIC_KEY = process.env.SYNC_PUBLIC_KEY;
     const SYNC_PRIVATE_KEY = process.env.SYNC_PRIVATE_KEY;
     const META_ACCESS_TOKEN = process.env.META_ACCESS_TOKEN;
-    const PIXEL_ID = '1303581471201526';
 
     if (!SYNC_PUBLIC_KEY  !META_ACCESS_TOKEN) {
       return res.status(500).json({ error: 'Missing environment variables' });
     }
 
-    // 🔐 Basic Auth (public:private)
+    // 🔐 Monta Basic Auth corretamente
     const encodedAuth = Buffer
       .from(${SYNC_PUBLIC_KEY}:${SYNC_PRIVATE_KEY})
       .toString('base64');
@@ -45,21 +42,12 @@ export default async function handler(req, res) {
       return res.status(200).json({ status: "NOT_APPROVED" });
     }
 
-    // 📧 Hash email
-    const hashedEmail = crypto
-      .createHash('sha256')
-      .update(syncData.email.trim().toLowerCase())
-      .digest('hex');
-
-    // 📡 Envia CAPI
+    // 📡 Envia Purchase para Meta
     const metaPayload = {
       data: [{
         event_name: "Purchase",
         event_time: Math.floor(Date.now() / 1000),
         action_source: "website",
-        user_data: {
-          em: hashedEmail
-        },
         custom_data: {
           currency: "BRL",
           value: parseFloat(syncData.valor_bruto)
@@ -68,7 +56,7 @@ export default async function handler(req, res) {
     };
 
     const metaResponse = await fetch(
-      https://graph.facebook.com/v18.0/${PIXEL_ID}/events?access_token=${META_ACCESS_TOKEN},
+      https://graph.facebook.com/v18.0/1303581471201526/events?access_token=${META_ACCESS_TOKEN},
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -84,8 +72,10 @@ export default async function handler(req, res) {
     });
 
   } catch (error) {
+
     return res.status(500).json({
       error: error.message
     });
+
   }
 }
